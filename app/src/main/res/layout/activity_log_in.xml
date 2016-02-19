@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center_vertical"
+    android:background="#3F51B5"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    tools:context="androidapp.simbiosys.com.roadtripfinder.LogInActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:gravity="bottom"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/userID"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:hint="Email or Phone"
+            android:textColorHint="#E8EAF6"
+            android:textSize="24dp" />
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:hint="Password"
+            android:textColorHint="#E8EAF6"
+            android:textSize="24dp" />
+
+        <Button
+            android:id="@+id/LogIn"
+            android:layout_width="320dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="30dp"
+            android:background="#5C6BC0"
+            android:stateListAnimator="@null"
+            android:text="LOG IN"
+            android:textColor="#E8EAF6"
+            android:textSize="20dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="bottom"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/newAccount"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:background="#3F51B5"
+            android:stateListAnimator="@null"
+            android:text="Create New RoadTripFinder Account"
+            android:textAllCaps="false"
+            android:textColor="#E8EAF6"
+            android:textSize="20dp" />
+
+        <Button
+            android:id="@+id/skip"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="30dp"
+            android:layout_marginTop="6dp"
+            android:background="#3F51B5"
+            android:stateListAnimator="@null"
+            android:text="Skip"
+            android:textAllCaps="false"
+            android:textColor="#E8EAF6"
+            android:textSize="20dp" />
+
+    </LinearLayout>
+
+</LinearLayout>
