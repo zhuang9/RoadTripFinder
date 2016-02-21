@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 public class AutoCompleteActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
+
     private static final String LOG_TAG = "MainActivity";
     private static final int GOOGLE_API_CLIENT_ID = 0;
     private AutoCompleteTextView autoCompleteTextView;
@@ -34,7 +35,7 @@ public class AutoCompleteActivity extends AppCompatActivity implements GoogleApi
     private Button GetDestination;
     private GoogleApiClient googleApiClient;
     private PlaceAutocompleteAdapter placeAutocompleteAdapter;
-    private static final LatLngBounds BOUNDS_BAY_AREA = new LatLngBounds(new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
+    private static final LatLngBounds BOUNDS_BAY_AREA = new LatLngBounds(new LatLng(37.197668, -122.404449), new LatLng(38.913779, -120.989512));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,7 @@ public class AutoCompleteActivity extends AppCompatActivity implements GoogleApi
                 .addConnectionCallbacks(this)
                 .build();
         autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.autoComplete);
-        autoCompleteTextView.setThreshold(6);
+        autoCompleteTextView.setThreshold(3);
         PlaceName = (TextView) findViewById(R.id.PlaceName);
         PlaceAddress = (TextView) findViewById(R.id.PlaceAddress);
         PlacePhone = (TextView) findViewById(R.id.PlacePhone);
@@ -59,9 +60,10 @@ public class AutoCompleteActivity extends AppCompatActivity implements GoogleApi
         GetDestination.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent destination = new Intent();
-                
-
+                Intent SetDestination = new Intent(AutoCompleteActivity.this, MainActivity.class);
+                SetDestination.putExtra("PlaceLatlng", PlaceLatlng.toString());
+                setResult(2, SetDestination);
+                startActivity(SetDestination);
             }
         });
     }
@@ -83,8 +85,7 @@ public class AutoCompleteActivity extends AppCompatActivity implements GoogleApi
         @Override
         public void onResult(PlaceBuffer places) {
             if (!places.getStatus().isSuccess()) {
-                Log.e(LOG_TAG, "Place query did not complete. Error: " +
-                        places.getStatus().toString());
+                Log.e(LOG_TAG, "Place query did not complete. Error: " + places.getStatus().toString());
                 return;
             }
             // Selecting the first object buffer.

@@ -14,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -57,12 +58,16 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
             return;
         }
 
+        Intent GetDestination = getActivity().getIntent();
+        onActivityResult(1, 2, GetDestination);
+        String Destination = GetDestination.getStringExtra("PlaceLatlng");
+
         googleMap.setMyLocationEnabled(true);
         googleMap.getUiSettings().setCompassEnabled(true);
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-        if (location != null) {
+        if (Destination == null) {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(location.getLatitude(), location.getLongitude()), 13));
 
@@ -73,6 +78,9 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                     .tilt(0)                   // Sets the tilt of the camera
                     .build();                  // Creates a CameraPosition from the builder
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        }
+        else {
+            Toast.makeText(getActivity(), "you choice is: " + Destination, Toast.LENGTH_LONG).show();
         }
     }
 }
