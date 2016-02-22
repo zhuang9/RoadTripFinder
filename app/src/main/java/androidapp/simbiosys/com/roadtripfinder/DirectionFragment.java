@@ -22,6 +22,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class DirectionFragment extends Fragment implements OnMapReadyCallback {
 
@@ -62,6 +64,7 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
         onActivityResult(1, 2, GetDestination);
         String Destination = GetDestination.getStringExtra("PlaceLatlng");
 
+
         googleMap.setMyLocationEnabled(true);
         googleMap.getUiSettings().setCompassEnabled(true);
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -78,9 +81,19 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                     .tilt(0)                   // Sets the tilt of the camera
                     .build();                  // Creates a CameraPosition from the builder
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        }
-        else {
-            Toast.makeText(getActivity(), "you choice is: " + Destination, Toast.LENGTH_LONG).show();
+        } else {
+            Destination = Destination.replaceAll("[^\\.0123456789,-]", "");
+            String DestinationLatlng[] = Destination.split(",");
+            Double DestinationLat = Double.parseDouble(DestinationLatlng[0]);
+            Double DestinationLng = Double.parseDouble(DestinationLatlng[1]);
+            googleMap.addMarker(new MarkerOptions().position(new LatLng(DestinationLat, DestinationLng)));
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(DestinationLat, DestinationLng))      // Sets the center of the map to location user
+                    .zoom(13)                  // Sets the zoom
+                    .bearing(0)                // Sets the orientation of the camera
+                    .tilt(0)                   // Sets the tilt of the camera
+                    .build();                  // Creates a CameraPosition from the builder
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
     }
 }

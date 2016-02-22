@@ -61,7 +61,7 @@ public class AutoCompleteActivity extends AppCompatActivity implements GoogleApi
             @Override
             public void onClick(View v) {
                 Intent SetDestination = new Intent(AutoCompleteActivity.this, MainActivity.class);
-                SetDestination.putExtra("PlaceLatlng", PlaceLatlng.toString());
+                SetDestination.putExtra("PlaceLatlng", PlaceLatlng.getText().toString());
                 setResult(2, SetDestination);
                 startActivity(SetDestination);
             }
