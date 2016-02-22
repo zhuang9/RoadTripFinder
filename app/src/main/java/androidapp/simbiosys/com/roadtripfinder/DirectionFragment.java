@@ -22,7 +22,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class DirectionFragment extends Fragment implements OnMapReadyCallback {
@@ -63,7 +62,7 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
         Intent GetDestination = getActivity().getIntent();
         onActivityResult(1, 2, GetDestination);
         String Destination = GetDestination.getStringExtra("PlaceLatlng");
-
+        String DestinationName = GetDestination.getStringExtra("PlaceName");
 
         googleMap.setMyLocationEnabled(true);
         googleMap.getUiSettings().setCompassEnabled(true);
@@ -71,9 +70,7 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
         Criteria criteria = new Criteria();
         Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
         if (Destination == null) {
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(location.getLatitude(), location.getLongitude()), 13));
-
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
                     .zoom(13)                  // Sets the zoom
@@ -94,6 +91,8 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                     .tilt(0)                   // Sets the tilt of the camera
                     .build();                  // Creates a CameraPosition from the builder
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            floatingActionButton.show();
+            Toast.makeText(getActivity(), "Your destination is: " + DestinationName, Toast.LENGTH_LONG).show();
         }
     }
 }
