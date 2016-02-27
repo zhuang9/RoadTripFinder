@@ -86,13 +86,21 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
             googleMap.addMarker(new MarkerOptions().position(new LatLng(DestinationLat, DestinationLng)));
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(DestinationLat, DestinationLng))      // Sets the center of the map to location user
-                    .zoom(13)                  // Sets the zoom
+                    .zoom(10)                  // Sets the zoom
                     .bearing(0)                // Sets the orientation of the camera
                     .tilt(0)                   // Sets the tilt of the camera
                     .build();                  // Creates a CameraPosition from the builder
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             floatingActionButton.show();
             Toast.makeText(getActivity(), "Your destination is: " + DestinationName, Toast.LENGTH_LONG).show();
+            floatingActionButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    NavigationActivity navigationActivity = new NavigationActivity();
+
+
+                }
+            });
         }
     }
 }
