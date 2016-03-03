@@ -3,7 +3,6 @@ package androidapp.simbiosys.com.roadtripfinder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -46,6 +45,7 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
     SearchView searchView;
     FloatingActionButton floatingActionButton;
     GoogleMap mGooglemap;
+    LatLng origin, destination;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,7 +55,6 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
         mapFragment.getMapAsync(this);
         searchView = (SearchView) view.findViewById(R.id.searchView);
         floatingActionButton = (FloatingActionButton) view.findViewById(R.id.fab);
-
         searchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,53 +75,69 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 100);
             return;
         }
-
+        /**
+         * Receive search place information from AutoCompleteActivity
+         **/
         mGooglemap = googleMap;
         final Intent GetDestination = getActivity().getIntent();
         onActivityResult(1, 2, GetDestination);
         String Destination = GetDestination.getStringExtra("PlaceLatlng");
         String DestinationName = GetDestination.getStringExtra("PlaceName");
-
+        /**
+         * Initialize Google Maps
+         **/
         googleMap.setMyLocationEnabled(true);
         googleMap.getUiSettings().setCompassEnabled(true);
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-        final LatLng origin = new LatLng(location.getLatitude(), location.getLongitude());
-
+        origin = new LatLng(location.getLatitude(), location.getLongitude());
 
         if (Destination == null) {
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 12));
             CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
+                    .target(origin)      // Sets the center of the map to location user
                     .zoom(13)                  // Sets the zoom
                     .bearing(0)                // Sets the orientation of the camera
                     .tilt(0)                   // Sets the tilt of the camera
                     .build();                  // Creates a CameraPosition from the builder
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         } else {
+            /**
+             * Parse latitude and longitude from received data
+             **/
             Destination = Destination.replaceAll("[^\\.0123456789,-]", "");
             String DestinationLatlng[] = Destination.split(",");
             Double DestinationLat = Double.parseDouble(DestinationLatlng[0]);
             Double DestinationLng = Double.parseDouble(DestinationLatlng[1]);
-            final LatLng destination = new LatLng(DestinationLat, DestinationLng);
+            destination = new LatLng(DestinationLat, DestinationLng);
 
             googleMap.addMarker(new MarkerOptions().position(destination));
             CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(new LatLng(DestinationLat, DestinationLng))      // Sets the center of the map to location user
-                    .zoom(10)                  // Sets the zoom
+                    .target(destination)       // Sets the center of the map to location user
+                    .zoom(12)                  // Sets the zoom
                     .bearing(0)                // Sets the orientation of the camera
                     .tilt(0)                   // Sets the tilt of the camera
                     .build();                  // Creates a CameraPosition from the builder
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            floatingActionButton.show();
             Toast.makeText(getActivity(), "Your destination is: " + DestinationName, Toast.LENGTH_LONG).show();
+            floatingActionButton.show();
             floatingActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     String url = getDirectionsUrl(origin, destination);
                     DownloadTask downloadTask = new DownloadTask();
                     downloadTask.execute(url);
+                    // Move camera to appropriate position
+                    LatLng midPoint = new LatLng((origin.latitude + destination.latitude) / 2, (origin.longitude + destination.longitude) / 2);
+                    CameraPosition cameraPosition = new CameraPosition.Builder()
+                            .target(midPoint)         // Sets the center of the map to location user
+                            .zoom(9)                  // Sets the zoom
+                            .bearing(0)               // Sets the orientation of the camera
+                            .tilt(0)                  // Sets the tilt of the camera
+                            .build();                 // Creates a CameraPosition from the builder
+                    mGooglemap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    floatingActionButton.hide();
                 }
             });
         }
@@ -210,13 +225,13 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
         @Override
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {
             ArrayList<LatLng> points = null;
-            PolylineOptions lineOptions = null;
+            PolylineOptions polylineOptions = null;
             MarkerOptions markerOptions = new MarkerOptions();
 
             // Traversing through all the routes
             for (int i = 0; i < result.size(); i++) {
                 points = new ArrayList<LatLng>();
-                lineOptions = new PolylineOptions();
+                polylineOptions = new PolylineOptions();
 
                 // Fetching i-th route
                 List<HashMap<String, String>> path = result.get(i);
@@ -231,17 +246,15 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
 
                     points.add(position);
                 }
-
                 // Adding all the points in the route to LineOptions
-                lineOptions.addAll(points);
-                lineOptions.width(3);
-
+                polylineOptions.addAll(points);
+                polylineOptions.width(10);
                 // Changing the color polyline according to the mode
-                lineOptions.color(Color.BLUE);
+                polylineOptions.color(0xFF3399FF);
             }
 
             // Drawing polyline in the Google Map for the i-th route
-            mGooglemap.addPolyline(lineOptions);
+            mGooglemap.addPolyline(polylineOptions);
         }
     }
 }
