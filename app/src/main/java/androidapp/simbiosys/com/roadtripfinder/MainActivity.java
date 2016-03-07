@@ -40,6 +40,7 @@ public class MainActivity extends FragmentActivity {
 
         MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager(), fragmentList, titleList);
         viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(4);
         tabLayout.setupWithViewPager(viewPager);
     }
 

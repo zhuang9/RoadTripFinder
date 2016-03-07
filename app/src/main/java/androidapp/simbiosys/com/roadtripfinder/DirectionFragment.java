@@ -45,7 +45,7 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
     SearchView searchView;
     FloatingActionButton floatingActionButton;
     GoogleMap mGooglemap;
-    LatLng origin, destination;
+    private static LatLng origin, destination;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,7 +76,7 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
             return;
         }
         /**
-         * Receive search place information from AutoCompleteActivity
+         * Fetching search place information from AutoCompleteActivity
          **/
         mGooglemap = googleMap;
         final Intent GetDestination = getActivity().getIntent();
