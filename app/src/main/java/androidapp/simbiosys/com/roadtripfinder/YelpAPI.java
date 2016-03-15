@@ -1,13 +1,21 @@
 package androidapp.simbiosys.com.roadtripfinder;
 
+/**
+ * Created by zhehuang on 3/15/16.
+ */
 import com.yelp.clientlib.entities.Business;
 import com.yelp.clientlib.entities.SearchResponse;
+import com.yelp.clientlib.entities.options.BoundingBoxOptions;
+import com.yelp.clientlib.entities.options.CoordinateOptions;
 
 import java.util.Map;
 
-/**
- * Created by zhehuang on 3/11/16.
- */
+import retrofit.Call;
+import retrofit.http.GET;
+import retrofit.http.Path;
+import retrofit.http.Query;
+import retrofit.http.QueryMap;
+
 public interface YelpAPI {
 
     /**
