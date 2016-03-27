@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 public class DirectionFragment extends Fragment implements OnMapReadyCallback {
 
     SearchView searchView;
@@ -96,7 +95,7 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
         if (Destination == null) {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 12));
             CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(origin)      // Sets the center of the map to location user
+                    .target(origin)            // Sets the center of the map to location user
                     .zoom(13)                  // Sets the zoom
                     .bearing(0)                // Sets the orientation of the camera
                     .tilt(0)                   // Sets the tilt of the camera
@@ -132,12 +131,18 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                     LatLng midPoint = new LatLng((origin.latitude + destination.latitude) / 2, (origin.longitude + destination.longitude) / 2);
                     CameraPosition cameraPosition = new CameraPosition.Builder()
                             .target(midPoint)         // Sets the center of the map to location user
-                            .zoom(9)                  // Sets the zoom
+                            .zoom(6)                  // Sets the zoom
                             .bearing(0)               // Sets the orientation of the camera
                             .tilt(0)                  // Sets the tilt of the camera
                             .build();                 // Creates a CameraPosition from the builder
                     mGooglemap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                     floatingActionButton.hide();
+                }
+            });
+            mGooglemap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLng) {
+
                 }
             });
         }
@@ -147,6 +152,28 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
         String url = "https://maps.googleapis.com/maps/api/directions/json?"
                 + "origin=" + start.latitude + "," + start.longitude + "&destination=" + end.latitude + "," + end.longitude;
         return url;
+    }
+
+    public class DownloadTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... url) {
+            String data = "";
+            try {
+                // Fetching the data from web service
+                data = downloadUrl(url[0]);
+            } catch (Exception e) {
+                Log.d("Background Task", e.toString());
+            }
+            return data;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            ParserTask parserTask = new ParserTask();
+            parserTask.execute(result);
+        }
     }
 
     public String downloadUrl(String strUrl) throws IOException {
@@ -176,34 +203,11 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
         return data;
     }
 
-    public class DownloadTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... url) {
-            String data = "";
-            try {
-                // Fetching the data from web service
-                data = downloadUrl(url[0]);
-            } catch (Exception e) {
-                Log.d("Background Task", e.toString());
-            }
-            return data;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            ParserTask parserTask = new ParserTask();
-            parserTask.execute(result);
-        }
-    }
-
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
 
         // Parsing the data in non-ui thread
         @Override
-        protected List<List<HashMap<String, String>>> doInBackground(
-                String... jsonData) {
+        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
 
             JSONObject jObject;
             List<List<HashMap<String, String>>> routes = null;
@@ -239,11 +243,9 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                 // Fetching all the points in i-th route
                 for (int j = 0; j < path.size(); j++) {
                     HashMap<String, String> point = path.get(j);
-
                     double lat = Double.parseDouble(point.get("lat"));
                     double lng = Double.parseDouble(point.get("lng"));
                     LatLng position = new LatLng(lat, lng);
-
                     points.add(position);
                 }
                 // Adding all the points in the route to LineOptions
