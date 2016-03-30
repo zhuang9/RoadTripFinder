@@ -44,7 +44,7 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
     SearchView searchView;
     FloatingActionButton floatingActionButton;
     GoogleMap mGooglemap;
-    private static LatLng origin, destination;
+    LatLng origin, destination;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -89,14 +89,13 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
         googleMap.getUiSettings().setCompassEnabled(true);
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
-        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-        origin = new LatLng(location.getLatitude(), location.getLongitude());
+        Location LastLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+        origin = new LatLng(LastLocation.getLatitude(), LastLocation.getLongitude());
 
         if (Destination == null) {
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 12));
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(origin)            // Sets the center of the map to location user
-                    .zoom(13)                  // Sets the zoom
+                    .zoom(12)                  // Sets the zoom
                     .bearing(0)                // Sets the orientation of the camera
                     .tilt(0)                   // Sets the tilt of the camera
                     .build();                  // Creates a CameraPosition from the builder
@@ -254,7 +253,6 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                 // Changing the color polyline according to the mode
                 polylineOptions.color(0xFF3399FF);
             }
-
             // Drawing polyline in the Google Map for the i-th route
             mGooglemap.addPolyline(polylineOptions);
         }
