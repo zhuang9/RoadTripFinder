@@ -45,6 +45,7 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
     FloatingActionButton floatingActionButton;
     GoogleMap mGooglemap;
     LatLng origin, destination;
+    String Destination, DestinationName;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,7 +59,7 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), AutoCompleteActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 1);
             }
         });
         floatingActionButton.hide();
@@ -80,8 +81,8 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
         mGooglemap = googleMap;
         final Intent GetDestination = getActivity().getIntent();
         onActivityResult(1, 2, GetDestination);
-        String Destination = GetDestination.getStringExtra("PlaceLatlng");
-        String DestinationName = GetDestination.getStringExtra("PlaceName");
+        Destination = GetDestination.getStringExtra("PlaceLatlng");
+        DestinationName = GetDestination.getStringExtra("PlaceName");
         /**
          * Initialize Google Maps
          **/
