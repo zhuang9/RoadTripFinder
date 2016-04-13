@@ -22,8 +22,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -42,10 +44,11 @@ import java.util.List;
 public class DirectionFragment extends Fragment implements OnMapReadyCallback {
 
     SearchView searchView;
-    FloatingActionButton floatingActionButton;
+    FloatingActionButton fab_Direction, fab_addMarker;
     GoogleMap mGooglemap;
     LatLng origin, destination;
     String Destination, DestinationName;
+    Marker Waypoints;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,7 +57,8 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         searchView = (SearchView) view.findViewById(R.id.searchView);
-        floatingActionButton = (FloatingActionButton) view.findViewById(R.id.fab);
+        fab_Direction = (FloatingActionButton) view.findViewById(R.id.fab_Direction);
+        fab_addMarker = (FloatingActionButton) view.findViewById(R.id.fab_addMarker);
         searchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,7 +66,8 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                 startActivityForResult(intent, 1);
             }
         });
-        floatingActionButton.hide();
+        fab_Direction.hide();
+        fab_addMarker.hide();
         return view;
     }
 
@@ -120,8 +125,11 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                     .build();                  // Creates a CameraPosition from the builder
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             Toast.makeText(getActivity(), "Your destination is: " + DestinationName, Toast.LENGTH_LONG).show();
-            floatingActionButton.show();
-            floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Get direction from current location to destination
+             **/
+            fab_Direction.show();
+            fab_Direction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     String url = getDirectionsUrl(origin, destination);
@@ -136,15 +144,29 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                             .tilt(0)                  // Sets the tilt of the camera
                             .build();                 // Creates a CameraPosition from the builder
                     mGooglemap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                    floatingActionButton.hide();
                 }
             });
-            mGooglemap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            fab_addMarker.show();
+            fab_addMarker.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onMapClick(LatLng latLng) {
-
+                public void onClick(View v) {
+                    Toast.makeText(getContext(), "Click Google Maps to add a marker for restaurant search.", Toast.LENGTH_LONG).show();
+                    mGooglemap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                        @Override
+                        public void onMapClick(LatLng latLng) {
+                            Waypoints = mGooglemap.addMarker(new MarkerOptions()
+                                    .position(latLng)
+                                    .title("Waypoints")
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                                    .draggable(true));
+                            Waypoints.showInfoWindow();
+                            fab_Direction.hide();
+                            fab_addMarker.hide();
+                        }
+                    });
                 }
             });
+
         }
     }
 
@@ -230,7 +252,6 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {
             ArrayList<LatLng> points = null;
             PolylineOptions polylineOptions = null;
-            MarkerOptions markerOptions = new MarkerOptions();
 
             // Traversing through all the routes
             for (int i = 0; i < result.size(); i++) {

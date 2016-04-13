@@ -18,25 +18,23 @@ public class AutoCompleteActivity extends AppCompatActivity {
 
     int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     String TAG = "AutoCompleteActivity";
+    String PlaceLatlng;
     Button Set_Destination;
-    TextView PlaceName, PlaceAddress, PlacePhone, PlaceWeb, PlaceLatlng;
+    TextView PlaceName, PlaceDetails;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auto_complete);
         PlaceName = (TextView) findViewById(R.id.PlaceName);
-        PlaceAddress = (TextView) findViewById(R.id.PlaceAddress);
-        PlacePhone = (TextView) findViewById(R.id.PlacePhone);
-        PlaceWeb = (TextView) findViewById(R.id.PlaceWeb);
-        PlaceLatlng = (TextView) findViewById(R.id.PlaceLatlng);
+        PlaceDetails = (TextView) findViewById(R.id.PlaceDetails);
         Set_Destination = (Button) findViewById(R.id.SetDestination);
         AutoCompleteActivity();
         Set_Destination.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent SetDestination = new Intent(AutoCompleteActivity.this, MainActivity.class);
-                SetDestination.putExtra("PlaceLatlng", PlaceLatlng.getText().toString());
+                SetDestination.putExtra("PlaceLatlng", PlaceLatlng);
                 SetDestination.putExtra("PlaceName", PlaceName.getText().toString());
                 setResult(2, SetDestination);
                 startActivity(SetDestination);
@@ -63,10 +61,12 @@ public class AutoCompleteActivity extends AppCompatActivity {
                 Log.i(TAG, "Place: " + place.getName());
 
                 PlaceName.setText(place.getName());
-                PlaceAddress.setText(place.getAddress());
-                PlacePhone.setText(place.getPhoneNumber());
-                PlaceWeb.setText(place.getWebsiteUri().toString());
-                PlaceLatlng.setText(place.getLatLng().toString());
+
+                String placeDetails = place.getAddress() + "\n"
+                        + place.getPhoneNumber() + "\n"
+                        + place.getWebsiteUri() + "\n";
+                PlaceDetails.setText(placeDetails);
+                PlaceLatlng = place.getLatLng().toString();
 
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
