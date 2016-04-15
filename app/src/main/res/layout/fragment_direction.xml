@@ -35,13 +35,15 @@
         android:id="@+id/fab_addMarker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/fab_Direction"
-        android:layout_alignStart="@+id/fab_Direction"
-        android:layout_marginBottom="35dp"
         android:backgroundTint="#EC407A"
         android:clickable="true"
         android:elevation="6dp"
         android:src="@drawable/ic_add_location_white_24dp"
-        app:borderWidth="0dp" />
+        app:borderWidth="0dp"
+        android:layout_above="@+id/fab_Direction"
+        android:layout_alignStart="@+id/fab_Direction"
+        android:layout_marginBottom="41dp" />
+
+
 
 </RelativeLayout>

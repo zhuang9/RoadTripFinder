@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -25,6 +26,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -135,15 +137,16 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                     String url = getDirectionsUrl(origin, destination);
                     DownloadTask downloadTask = new DownloadTask();
                     downloadTask.execute(url);
-                    // Move camera to appropriate position
-                    LatLng midPoint = new LatLng((origin.latitude + destination.latitude) / 2, (origin.longitude + destination.longitude) / 2);
-                    CameraPosition cameraPosition = new CameraPosition.Builder()
-                            .target(midPoint)         // Sets the center of the map to location user
-                            .zoom(6)                  // Sets the zoom
-                            .bearing(0)               // Sets the orientation of the camera
-                            .tilt(0)                  // Sets the tilt of the camera
-                            .build();                 // Creates a CameraPosition from the builder
-                    mGooglemap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    /**
+                     *  Build new bounds for update camera to appropriate position
+                     **/
+                    LatLngBounds latLngBounds = new LatLngBounds.Builder()
+                            .include(origin)
+                            .include(destination)
+                            .build();
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(latLngBounds, 20);
+                    mGooglemap.moveCamera(cameraUpdate);
+                    mGooglemap.animateCamera(cameraUpdate);
                 }
             });
             fab_addMarker.show();
@@ -154,6 +157,9 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                     mGooglemap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                         @Override
                         public void onMapClick(LatLng latLng) {
+                            if (Waypoints != null) {
+                                Waypoints.remove();
+                            }
                             Waypoints = mGooglemap.addMarker(new MarkerOptions()
                                     .position(latLng)
                                     .title("Waypoints")
@@ -162,11 +168,19 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                             Waypoints.showInfoWindow();
                             fab_Direction.hide();
                             fab_addMarker.hide();
+
+
                         }
                     });
                 }
             });
-
+            mGooglemap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    Toast.makeText(getContext(), "You select place is: " + marker.getPosition(), Toast.LENGTH_LONG).show();
+                    return true;
+                }
+            });
         }
     }
 
