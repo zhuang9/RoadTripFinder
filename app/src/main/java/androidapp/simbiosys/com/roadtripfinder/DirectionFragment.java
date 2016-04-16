@@ -168,8 +168,6 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                             Waypoints.showInfoWindow();
                             fab_Direction.hide();
                             fab_addMarker.hide();
-
-
                         }
                     });
                 }
