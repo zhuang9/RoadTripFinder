@@ -46,7 +46,7 @@ import java.util.List;
 public class DirectionFragment extends Fragment implements OnMapReadyCallback {
 
     SearchView searchView;
-    FloatingActionButton fab_Direction, fab_addMarker;
+    FloatingActionButton fab_Direction, fab_addMarker, fab_findRestaurant;
     GoogleMap mGooglemap;
     LatLng origin, destination;
     String Destination, DestinationName;
@@ -61,6 +61,7 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
         searchView = (SearchView) view.findViewById(R.id.searchView);
         fab_Direction = (FloatingActionButton) view.findViewById(R.id.fab_Direction);
         fab_addMarker = (FloatingActionButton) view.findViewById(R.id.fab_addMarker);
+        fab_findRestaurant = (FloatingActionButton) view.findViewById(R.id.fab_findRestaurant);
         searchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,6 +71,7 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
         });
         fab_Direction.hide();
         fab_addMarker.hide();
+        fab_findRestaurant.hide();
         return view;
     }
 
@@ -147,9 +149,11 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                     CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(latLngBounds, 20);
                     mGooglemap.moveCamera(cameraUpdate);
                     mGooglemap.animateCamera(cameraUpdate);
+                    fab_Direction.hide();
+                    fab_findRestaurant.hide();
+                    fab_addMarker.show();
                 }
             });
-            fab_addMarker.show();
             fab_addMarker.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -168,18 +172,30 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                             Waypoints.showInfoWindow();
                             fab_Direction.hide();
                             fab_addMarker.hide();
+                            fab_findRestaurant.show();
                         }
                     });
                 }
             });
-            mGooglemap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(Marker marker) {
-                    Toast.makeText(getContext(), "You select place is: " + marker.getPosition(), Toast.LENGTH_LONG).show();
-                    return true;
-                }
-            });
         }
+        fab_findRestaurant.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String WayponitsLatlng = Waypoints.getPosition().toString();
+                WayponitsLatlng = WayponitsLatlng.replaceAll("[^\\.0123456789,-]", "");
+                String wayponitsLatlng[] = WayponitsLatlng.split(",");
+                Double wayponitsLat = Double.parseDouble(wayponitsLatlng[0]);
+                Double wayponitsLng = Double.parseDouble(wayponitsLatlng[1]);
+
+                Toast.makeText(getContext(), "You select place is: " + wayponitsLat + ", " + wayponitsLng, Toast.LENGTH_LONG).show();
+                StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+                googlePlacesUrl.append("location=" + wayponitsLat + "," + wayponitsLng);
+                googlePlacesUrl.append("&radius=" + "5000");
+                googlePlacesUrl.append("&type=" + "restaurant");
+
+
+            }
+        });
     }
 
     public String getDirectionsUrl(LatLng start, LatLng end) {
@@ -194,8 +210,8 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
         protected String doInBackground(String... url) {
             String data = "";
             try {
-                // Fetching the data from web service
-                data = downloadUrl(url[0]);
+                HttpUrlDownload httpUrlDownload = new HttpUrlDownload();
+                data = httpUrlDownload.downloadJSON(url[0]);
             } catch (Exception e) {
                 Log.d("Background Task", e.toString());
             }
@@ -208,33 +224,6 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
             ParserTask parserTask = new ParserTask();
             parserTask.execute(result);
         }
-    }
-
-    public String downloadUrl(String strUrl) throws IOException {
-        String data = "";
-        InputStream inputStream = null;
-        HttpURLConnection urlConnection = null;
-        try {
-            URL url = new URL(strUrl);
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.connect();
-            inputStream = urlConnection.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuffer stringBuffer = new StringBuffer();
-            String line = null;
-            while ((line = bufferedReader.readLine()) != null) {
-                stringBuffer.append(line);
-            }
-            data = stringBuffer.toString();
-            bufferedReader.close();
-        } catch (Exception e) {
-            Log.d("Exception while downloading url", e.toString());
-        } finally {
-            inputStream.close();
-            urlConnection.disconnect();
-        }
-        System.out.println("url:" + strUrl + "---->   downloadurl:" + data);
-        return data;
     }
 
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {

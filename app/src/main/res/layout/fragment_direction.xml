@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,43 +7,61 @@
     android:orientation="vertical"
     tools:context="androidapp.simbiosys.com.roadtripfinder.DirectionFragment">
 
-    <SearchView
-        android:id="@+id/searchView"
-        android:layout_width="match_parent"
-        android:layout_height="50dp" />
-
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/searchView" />
+        android:orientation="vertical">
+
+        <SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_Direction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="50dp"
-        android:layout_marginEnd="25dp"
+        android:layout_margin="30dp"
         android:backgroundTint="#1E88E5"
         android:clickable="true"
         android:elevation="6dp"
         android:src="@drawable/ic_directions_white_24dp"
-        app:borderWidth="0dp" />
+        app:borderWidth="0dp"
+        app:layout_anchor="@id/map"
+        app:layout_anchorGravity="bottom|right|end" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_addMarker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/fab_Direction"
-        android:layout_alignStart="@+id/fab_Direction"
-        android:layout_marginBottom="41dp"
+        android:layout_margin="30dp"
         android:backgroundTint="#EC407A"
         android:clickable="true"
         android:elevation="6dp"
         android:src="@drawable/ic_add_location_white_24dp"
-        app:borderWidth="0dp" />
+        app:borderWidth="0dp"
+        app:layout_anchor="@id/map"
+        app:layout_anchorGravity="bottom|right|end" />
 
-</RelativeLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_findRestaurant"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        android:backgroundTint="#FFEB3B"
+        android:clickable="true"
+        android:elevation="6dp"
+        android:src="@drawable/ic_restaurant_white_24dp"
+        app:borderWidth="0dp"
+        app:layout_anchor="@id/map"
+        app:layout_anchorGravity="bottom|right|end" />
+
+</android.support.design.widget.CoordinatorLayout>
