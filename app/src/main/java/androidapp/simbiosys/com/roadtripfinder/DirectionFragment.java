@@ -30,13 +30,11 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -76,7 +74,7 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(final GoogleMap googleMap) {
         /**
          * Requesting Permissions at Run Time
          **/
@@ -190,10 +188,16 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                 Toast.makeText(getContext(), "You select place is: " + wayponitsLat + ", " + wayponitsLng, Toast.LENGTH_LONG).show();
                 StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
                 googlePlacesUrl.append("location=" + wayponitsLat + "," + wayponitsLng);
-                googlePlacesUrl.append("&radius=" + "5000");
+                googlePlacesUrl.append("&radius=" + "20000");
                 googlePlacesUrl.append("&type=" + "restaurant");
+                googlePlacesUrl.append("&sensor=true");
+                googlePlacesUrl.append("&key=AIzaSyA1IPPNAt5RWAyZsZFHosfUK9WJAUK71f8");
 
-
+                GooglePlacesAsyncTask googlePlacesAsyncTask = new GooglePlacesAsyncTask();
+                Object[] toPass = new Object[2];
+                toPass[0] = mGooglemap;
+                toPass[1] = googlePlacesUrl.toString();
+                googlePlacesAsyncTask.execute(toPass);
             }
         });
     }
