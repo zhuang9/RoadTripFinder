@@ -30,13 +30,9 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -189,9 +185,9 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                 StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
                 googlePlacesUrl.append("location=" + wayponitsLat + "," + wayponitsLng);
                 googlePlacesUrl.append("&radius=" + "20000");
-                googlePlacesUrl.append("&type=" + "restaurant");
+                googlePlacesUrl.append("&type=" + "restaurant|bar");
                 googlePlacesUrl.append("&sensor=true");
-                googlePlacesUrl.append("&key=AIzaSyA1IPPNAt5RWAyZsZFHosfUK9WJAUK71f8");
+                googlePlacesUrl.append("&key=AIzaSyDLsgqw-i-uHJeGkLTZs3qCZQCd4ASaV84");
 
                 GooglePlacesAsyncTask googlePlacesAsyncTask = new GooglePlacesAsyncTask();
                 Object[] toPass = new Object[2];
@@ -242,7 +238,6 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
             try {
                 jObject = new JSONObject(jsonData[0]);
                 DirectionsJSONParser parser = new DirectionsJSONParser();
-
                 // Starts parsing data
                 routes = parser.parse(jObject);
                 System.out.println("do in background:" + routes);
@@ -262,10 +257,8 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
             for (int i = 0; i < result.size(); i++) {
                 points = new ArrayList<LatLng>();
                 polylineOptions = new PolylineOptions();
-
                 // Fetching i-th route
                 List<HashMap<String, String>> path = result.get(i);
-
                 // Fetching all the points in i-th route
                 for (int j = 0; j < path.size(); j++) {
                     HashMap<String, String> point = path.get(j);
