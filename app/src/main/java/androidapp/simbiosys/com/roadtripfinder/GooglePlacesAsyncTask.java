@@ -15,15 +15,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 /**
  * Created by zhehuang on 4/28/16.
  */
 public class GooglePlacesAsyncTask extends AsyncTask<Object, Void, String> {
 
-    String googlePlacesData = null;
-    JSONObject googlePlacesJson;
     GoogleMap googleMap;
+    String GooglePlacesData = null;
+    JSONObject googlePlacesJson;
 
     @Override
     protected String doInBackground(Object... inputObj) {
@@ -31,11 +30,11 @@ public class GooglePlacesAsyncTask extends AsyncTask<Object, Void, String> {
             googleMap = (GoogleMap) inputObj[0];
             String googlePlacesUrl = (String) inputObj[1];
             HttpUrlDownload httpUrlDownload = new HttpUrlDownload();
-            googlePlacesData = httpUrlDownload.downloadJSON(googlePlacesUrl);
+            GooglePlacesData = httpUrlDownload.downloadJSON(googlePlacesUrl);
         } catch (Exception e) {
             Log.d("Google Place Read Task", e.toString());
         }
-        return googlePlacesData;
+        return GooglePlacesData;
     }
 
     @Override
@@ -46,19 +45,19 @@ public class GooglePlacesAsyncTask extends AsyncTask<Object, Void, String> {
         toPass[1] = result;
         placesDisplayTask.execute(toPass);
     }
-    
+
     public class PlacesDisplayTask extends AsyncTask<Object, Integer, List<HashMap<String, String>>> {
 
         @Override
         protected List<HashMap<String, String>> doInBackground(Object... inputObj) {
 
             List<HashMap<String, String>> googlePlacesList = null;
-            Places placeJsonParser = new Places();
+            GooglePlacesParser googlePlacesParser = new GooglePlacesParser();
 
             try {
                 googleMap = (GoogleMap) inputObj[0];
                 googlePlacesJson = new JSONObject((String) inputObj[1]);
-                googlePlacesList = placeJsonParser.parse(googlePlacesJson);
+                googlePlacesList = googlePlacesParser.parse(googlePlacesJson);
             } catch (Exception e) {
                 Log.d("Exception", e.toString());
             }
@@ -82,7 +81,7 @@ public class GooglePlacesAsyncTask extends AsyncTask<Object, Void, String> {
         }
     }
 
-    public class Places {
+    public class GooglePlacesParser {
 
         public List<HashMap<String, String>> parse(JSONObject jsonObject) {
             JSONArray jsonArray = null;

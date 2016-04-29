@@ -6,11 +6,9 @@ import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -29,13 +27,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
-
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class DirectionFragment extends Fragment implements OnMapReadyCallback {
 
@@ -131,8 +122,11 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                 @Override
                 public void onClick(View v) {
                     String url = getDirectionsUrl(origin, destination);
-                    DownloadTask downloadTask = new DownloadTask();
-                    downloadTask.execute(url);
+                    DirectionAsyncTask directionAsyncTask = new DirectionAsyncTask();
+                    Object[] toPass = new Object[2];
+                    toPass[0] = mGooglemap;
+                    toPass[1] = url;
+                    directionAsyncTask.execute(toPass);
                     /**
                      *  Build new bounds for update camera to appropriate position
                      **/
@@ -202,79 +196,5 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
         String url = "https://maps.googleapis.com/maps/api/directions/json?"
                 + "origin=" + start.latitude + "," + start.longitude + "&destination=" + end.latitude + "," + end.longitude;
         return url;
-    }
-
-    public class DownloadTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... url) {
-            String data = "";
-            try {
-                HttpUrlDownload httpUrlDownload = new HttpUrlDownload();
-                data = httpUrlDownload.downloadJSON(url[0]);
-            } catch (Exception e) {
-                Log.d("Background Task", e.toString());
-            }
-            return data;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            ParserTask parserTask = new ParserTask();
-            parserTask.execute(result);
-        }
-    }
-
-    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
-
-        // Parsing the data in non-ui thread
-        @Override
-        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
-
-            JSONObject jObject;
-            List<List<HashMap<String, String>>> routes = null;
-
-            try {
-                jObject = new JSONObject(jsonData[0]);
-                DirectionsJSONParser parser = new DirectionsJSONParser();
-                // Starts parsing data
-                routes = parser.parse(jObject);
-                System.out.println("do in background:" + routes);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return routes;
-        }
-
-        // Executes in UI thread, after the parsing process
-        @Override
-        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
-            ArrayList<LatLng> points = null;
-            PolylineOptions polylineOptions = null;
-
-            // Traversing through all the routes
-            for (int i = 0; i < result.size(); i++) {
-                points = new ArrayList<LatLng>();
-                polylineOptions = new PolylineOptions();
-                // Fetching i-th route
-                List<HashMap<String, String>> path = result.get(i);
-                // Fetching all the points in i-th route
-                for (int j = 0; j < path.size(); j++) {
-                    HashMap<String, String> point = path.get(j);
-                    double lat = Double.parseDouble(point.get("lat"));
-                    double lng = Double.parseDouble(point.get("lng"));
-                    LatLng position = new LatLng(lat, lng);
-                    points.add(position);
-                }
-                // Adding all the points in the route to LineOptions
-                polylineOptions.addAll(points);
-                polylineOptions.width(10);
-                // Changing the color polyline according to the mode
-                polylineOptions.color(0xFF3399FF);
-            }
-            // Drawing polyline in the Google Map for the i-th route
-            mGooglemap.addPolyline(polylineOptions);
-        }
     }
 }
