@@ -21,11 +21,10 @@ import java.util.List;
 public class DirectionAsyncTask extends AsyncTask<Object, Void, String> {
 
     GoogleMap googleMap;
-    String GoogleMapsDirectionData = null;
 
     @Override
     protected String doInBackground(Object... inputObj) {
-
+        String GoogleMapsDirectionData = null;
         try {
             googleMap = (GoogleMap) inputObj[0];
             String url = (String) inputObj[1];
@@ -114,7 +113,6 @@ public class DirectionAsyncTask extends AsyncTask<Object, Void, String> {
             JSONArray jSteps = null;
 
             try {
-
                 jRoutes = jObject.getJSONArray("routes");
 
                 /** Traversing all routes */

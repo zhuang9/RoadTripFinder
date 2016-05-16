@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -30,7 +29,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class DirectionFragment extends Fragment implements OnMapReadyCallback {
 
-    SearchView searchView;
     FloatingActionButton fab_Direction, fab_addMarker, fab_findRestaurant;
     GoogleMap mGooglemap;
     LatLng origin, destination;
@@ -43,17 +41,9 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
         View view = inflater.inflate(R.layout.fragment_direction, container, false);
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        searchView = (SearchView) view.findViewById(R.id.searchView);
         fab_Direction = (FloatingActionButton) view.findViewById(R.id.fab_Direction);
         fab_addMarker = (FloatingActionButton) view.findViewById(R.id.fab_addMarker);
         fab_findRestaurant = (FloatingActionButton) view.findViewById(R.id.fab_findRestaurant);
-        searchView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), AutoCompleteActivity.class);
-                startActivityForResult(intent, 1);
-            }
-        });
         fab_Direction.hide();
         fab_addMarker.hide();
         fab_findRestaurant.hide();
@@ -121,11 +111,15 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
             fab_Direction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String url = getDirectionsUrl(origin, destination);
+
+                    StringBuilder GoogleDirectionURL = new StringBuilder("https://maps.googleapis.com/maps/api/directions/json?");
+                    GoogleDirectionURL.append("origin=" + origin.latitude + "," + origin.longitude);
+                    GoogleDirectionURL.append("&destination=" + destination.latitude + "," + destination.longitude);
+
                     DirectionAsyncTask directionAsyncTask = new DirectionAsyncTask();
                     Object[] toPass = new Object[2];
                     toPass[0] = mGooglemap;
-                    toPass[1] = url;
+                    toPass[1] = GoogleDirectionURL.toString();
                     directionAsyncTask.execute(toPass);
                     /**
                      *  Build new bounds for update camera to appropriate position
@@ -134,7 +128,7 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                             .include(origin)
                             .include(destination)
                             .build();
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(latLngBounds, 20);
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(latLngBounds, 3);
                     mGooglemap.moveCamera(cameraUpdate);
                     mGooglemap.animateCamera(cameraUpdate);
                     fab_Direction.hide();
@@ -142,9 +136,11 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                     fab_addMarker.show();
                 }
             });
+
             fab_addMarker.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     Toast.makeText(getContext(), "Click Google Maps to add a marker for restaurant search.", Toast.LENGTH_LONG).show();
                     mGooglemap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                         @Override
@@ -166,35 +162,31 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                 }
             });
         }
+
         fab_findRestaurant.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 String WayponitsLatlng = Waypoints.getPosition().toString();
                 WayponitsLatlng = WayponitsLatlng.replaceAll("[^\\.0123456789,-]", "");
                 String wayponitsLatlng[] = WayponitsLatlng.split(",");
                 Double wayponitsLat = Double.parseDouble(wayponitsLatlng[0]);
                 Double wayponitsLng = Double.parseDouble(wayponitsLatlng[1]);
-
                 Toast.makeText(getContext(), "You select place is: " + wayponitsLat + ", " + wayponitsLng, Toast.LENGTH_LONG).show();
-                StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
-                googlePlacesUrl.append("location=" + wayponitsLat + "," + wayponitsLng);
-                googlePlacesUrl.append("&radius=" + "20000");
-                googlePlacesUrl.append("&type=" + "restaurant|bar");
-                googlePlacesUrl.append("&sensor=true");
-                googlePlacesUrl.append("&key=AIzaSyDLsgqw-i-uHJeGkLTZs3qCZQCd4ASaV84");
+
+                StringBuilder GooglePlacesURL = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+                GooglePlacesURL.append("location=" + wayponitsLat + "," + wayponitsLng);
+                GooglePlacesURL.append("&radius=" + "2000");
+                GooglePlacesURL.append("&type=" + "restaurant");
+                GooglePlacesURL.append("&sensor=true");
+                GooglePlacesURL.append("&key=AIzaSyDLsgqw-i-uHJeGkLTZs3qCZQCd4ASaV84");
 
                 GooglePlacesAsyncTask googlePlacesAsyncTask = new GooglePlacesAsyncTask();
                 Object[] toPass = new Object[2];
                 toPass[0] = mGooglemap;
-                toPass[1] = googlePlacesUrl.toString();
+                toPass[1] = GooglePlacesURL.toString();
                 googlePlacesAsyncTask.execute(toPass);
             }
         });
-    }
-
-    public String getDirectionsUrl(LatLng start, LatLng end) {
-        String url = "https://maps.googleapis.com/maps/api/directions/json?"
-                + "origin=" + start.latitude + "," + start.longitude + "&destination=" + end.latitude + "," + end.longitude;
-        return url;
     }
 }

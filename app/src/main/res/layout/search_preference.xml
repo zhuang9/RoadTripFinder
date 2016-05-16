@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="350dp"
+    android:layout_height="460dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="20dp"
+        android:text="Search Type"
+        android:textColor="#000000"
+        android:textSize="28dp" />
+
+    <View
+        android:layout_width="300dp"
+        android:layout_height="2dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:background="#BBBBBB" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <RadioGroup
+            android:id="@+id/search_types"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkedButton="@+id/type_restaurant">
+
+            <RadioButton
+                android:id="@+id/type_restaurant"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Restaurant"
+                android:textSize="25dp" />
+
+            <RadioButton
+                android:id="@+id/type_cafe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cafe"
+                android:textSize="25dp" />
+
+            <RadioButton
+                android:id="@+id/type_gas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gas Station"
+                android:textSize="25dp" />
+
+            <RadioButton
+                android:id="@+id/type_hotel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hotel"
+                android:textSize="25dp" />
+
+        </RadioGroup>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="20dp"
+        android:text="Distance"
+        android:textColor="#000000"
+        android:textSize="28dp" />
+
+    <View
+        android:layout_width="300dp"
+        android:layout_height="2dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:background="#BBBBBB" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <RadioGroup
+            android:id="@+id/search_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkedButton="@+id/distance_1500">
+
+            <RadioButton
+                android:id="@+id/distance_500"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.5 mile"
+                android:textSize="25dp" />
+
+            <RadioButton
+                android:id="@+id/distance_1000"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1 mile"
+                android:textSize="25dp" />
+
+            <RadioButton
+                android:id="@+id/distance_1500"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1.5 miles"
+                android:textSize="25dp" />
+
+            <RadioButton
+                android:id="@+id/distance_2000"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2 miles"
+                android:textSize="25dp" />
+
+            <RadioButton
+                android:id="@+id/distance_5000"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5 miles"
+                android:textSize="25dp" />
+
+        </RadioGroup>
+    </LinearLayout>
+
+</LinearLayout>

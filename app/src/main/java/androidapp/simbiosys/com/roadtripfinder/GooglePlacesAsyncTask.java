@@ -21,11 +21,10 @@ import java.util.List;
 public class GooglePlacesAsyncTask extends AsyncTask<Object, Void, String> {
 
     GoogleMap googleMap;
-    String GooglePlacesData = null;
-    JSONObject googlePlacesJson;
 
     @Override
     protected String doInBackground(Object... inputObj) {
+        String GooglePlacesData = null;
         try {
             googleMap = (GoogleMap) inputObj[0];
             String googlePlacesUrl = (String) inputObj[1];
@@ -53,6 +52,7 @@ public class GooglePlacesAsyncTask extends AsyncTask<Object, Void, String> {
 
             List<HashMap<String, String>> googlePlacesList = null;
             GooglePlacesParser googlePlacesParser = new GooglePlacesParser();
+            JSONObject googlePlacesJson;
 
             try {
                 googleMap = (GoogleMap) inputObj[0];
@@ -68,14 +68,18 @@ public class GooglePlacesAsyncTask extends AsyncTask<Object, Void, String> {
         protected void onPostExecute(List<HashMap<String, String>> list) {
             for (int i = 0; i < list.size(); i++) {
                 MarkerOptions markerOptions = new MarkerOptions();
-                HashMap<String, String> googlePlace = list.get(i);
-                double lat = Double.parseDouble(googlePlace.get("lat"));
-                double lng = Double.parseDouble(googlePlace.get("lng"));
-                String placeName = googlePlace.get("place_name");
-                String vicinity = googlePlace.get("vicinity");
+                HashMap<String, String> GooglePlaceList = list.get(i);
+                double lat = Double.parseDouble(GooglePlaceList.get("lat"));
+                double lng = Double.parseDouble(GooglePlaceList.get("lng"));
+                String PlaceName = GooglePlaceList.get("place_name");
+                String OpenNow = GooglePlaceList.get("open_now");
+                String vicinity = GooglePlaceList.get("vicinity");
+                String PriceLevel = GooglePlaceList.get("prince_level");
+                String rating = GooglePlaceList.get("rating");
                 LatLng latLng = new LatLng(lat, lng);
                 markerOptions.position(latLng);
-                markerOptions.title(placeName + " : " + vicinity);
+                markerOptions.title(PlaceName + " : " + OpenNow + "; " + "rating(0-5): " + rating);
+                markerOptions.snippet(vicinity + "; " + "Price Level (0-5): " + PriceLevel);
                 googleMap.addMarker(markerOptions);
             }
         }
@@ -110,33 +114,49 @@ public class GooglePlacesAsyncTask extends AsyncTask<Object, Void, String> {
             return placesList;
         }
 
-        private HashMap<String, String> getPlace(JSONObject googlePlaceJson) {
-            HashMap<String, String> googlePlaceMap = new HashMap<String, String>();
-            String placeName = "-NA-";
-            String vicinity = "-NA-";
+        private HashMap<String, String> getPlace(JSONObject GooglePlaceJson) {
+            HashMap<String, String> GooglePlaceHashMap = new HashMap<String, String>();
+            String PlaceName = "N/A";
+            String OpenNow = "N/A";
+            String vicinity = "N/A";
             String latitude = "";
             String longitude = "";
-            String reference = "";
+            String PriceLevel = "N/A";
+            String rating = "N/A";
 
             try {
-                if (!googlePlaceJson.isNull("name")) {
-                    placeName = googlePlaceJson.getString("name");
+                if (!GooglePlaceJson.isNull("name")) {
+                    PlaceName = GooglePlaceJson.getString("name");
                 }
-                if (!googlePlaceJson.isNull("vicinity")) {
-                    vicinity = googlePlaceJson.getString("vicinity");
+                if (!GooglePlaceJson.isNull(("opening_hours"))) {
+                    OpenNow = GooglePlaceJson.getJSONObject("opening_hours").getString("open_now");
                 }
-                latitude = googlePlaceJson.getJSONObject("geometry").getJSONObject("location").getString("lat");
-                longitude = googlePlaceJson.getJSONObject("geometry").getJSONObject("location").getString("lng");
-                reference = googlePlaceJson.getString("reference");
-                googlePlaceMap.put("place_name", placeName);
-                googlePlaceMap.put("vicinity", vicinity);
-                googlePlaceMap.put("lat", latitude);
-                googlePlaceMap.put("lng", longitude);
-                googlePlaceMap.put("reference", reference);
+                if (!GooglePlaceJson.isNull("vicinity")) {
+                    vicinity = GooglePlaceJson.getString("vicinity");
+                }
+                if (!GooglePlaceJson.isNull("price_level")) {
+                    PriceLevel = GooglePlaceJson.getString("price_level");
+                }
+                if (!GooglePlaceJson.isNull("rating")) {
+                    rating = GooglePlaceJson.getString("rating");
+                }
+                if (OpenNow == "true") {
+                    GooglePlaceHashMap.put("open_now", "Open");
+                } else {
+                    GooglePlaceHashMap.put("open_now", "Closed");
+                }
+                latitude = GooglePlaceJson.getJSONObject("geometry").getJSONObject("location").getString("lat");
+                longitude = GooglePlaceJson.getJSONObject("geometry").getJSONObject("location").getString("lng");
+                GooglePlaceHashMap.put("place_name", PlaceName);
+                GooglePlaceHashMap.put("vicinity", vicinity);
+                GooglePlaceHashMap.put("lat", latitude);
+                GooglePlaceHashMap.put("lng", longitude);
+                GooglePlaceHashMap.put("prince_level", PriceLevel);
+                GooglePlaceHashMap.put("rating", rating);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            return googlePlaceMap;
+            return GooglePlaceHashMap;
         }
     }
 }
