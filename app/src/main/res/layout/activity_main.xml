@@ -8,7 +8,7 @@
     tools:context="androidapp.simbiosys.com.roadtripfinder.MainActivity">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/Toolbar"
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:background="#3F51B5">
@@ -22,6 +22,7 @@
         android:background="#FFFFFF"
         android:fillViewport="false"
         app:tabGravity="fill"
+        app:tabIndicatorColor="@color/colorAccent"
         app:tabMaxWidth="0dp"
         app:tabMode="fixed"
         app:tabSelectedTextColor="#3F51B5"

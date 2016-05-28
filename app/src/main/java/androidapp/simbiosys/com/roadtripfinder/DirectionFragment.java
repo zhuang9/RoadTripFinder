@@ -2,6 +2,7 @@ package androidapp.simbiosys.com.roadtripfinder;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -32,7 +33,7 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
     FloatingActionButton fab_Direction, fab_addMarker, fab_findRestaurant;
     GoogleMap mGooglemap;
     LatLng origin, destination;
-    String Destination, DestinationName;
+    String Destination, DestinationName, type, radius;
     Marker Waypoints;
 
     @Override
@@ -63,10 +64,10 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
          * Fetching search place information from AutoCompleteActivity
          **/
         mGooglemap = googleMap;
-        final Intent GetDestination = getActivity().getIntent();
-        onActivityResult(1, 2, GetDestination);
-        Destination = GetDestination.getStringExtra("PlaceLatlng");
-        DestinationName = GetDestination.getStringExtra("PlaceName");
+        final Intent getDestination = getActivity().getIntent();
+        onActivityResult(1, 2, getDestination);
+        Destination = getDestination.getStringExtra("PlaceLatlng");
+        DestinationName = getDestination.getStringExtra("PlaceName");
         /**
          * Initialize Google Maps
          **/
@@ -174,10 +175,23 @@ public class DirectionFragment extends Fragment implements OnMapReadyCallback {
                 Double wayponitsLng = Double.parseDouble(wayponitsLatlng[1]);
                 Toast.makeText(getContext(), "You select place is: " + wayponitsLat + ", " + wayponitsLng, Toast.LENGTH_LONG).show();
 
+                SharedPreferences searchSetting = getActivity().getSharedPreferences("searchSetting", Context.MODE_PRIVATE);
+
+                type = searchSetting.getString("type", "restaurant");
+                radius = searchSetting.getString("radius", "1500");
+
                 StringBuilder GooglePlacesURL = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
                 GooglePlacesURL.append("location=" + wayponitsLat + "," + wayponitsLng);
-                GooglePlacesURL.append("&radius=" + "2000");
-                GooglePlacesURL.append("&type=" + "restaurant");
+                if (radius == null) {
+                    GooglePlacesURL.append("&radius=" + "2000");
+                } else {
+                    GooglePlacesURL.append("&radius=" + radius);
+                }
+                if (type == null) {
+                    GooglePlacesURL.append("&type=" + "restaurant");
+                } else {
+                    GooglePlacesURL.append("&type=" + type);
+                }
                 GooglePlacesURL.append("&sensor=true");
                 GooglePlacesURL.append("&key=AIzaSyDLsgqw-i-uHJeGkLTZs3qCZQCd4ASaV84");
 

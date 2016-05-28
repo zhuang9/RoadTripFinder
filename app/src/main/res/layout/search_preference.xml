@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="350dp"
+    android:layout_width="460dp"
     android:layout_height="460dp"
     android:orientation="vertical">
 
@@ -14,7 +14,7 @@
         android:textSize="28dp" />
 
     <View
-        android:layout_width="300dp"
+        android:layout_width="460dp"
         android:layout_height="2dp"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
@@ -30,8 +30,7 @@
         <RadioGroup
             android:id="@+id/search_types"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checkedButton="@+id/type_restaurant">
+            android:layout_height="wrap_content">
 
             <RadioButton
                 android:id="@+id/type_restaurant"
@@ -74,7 +73,7 @@
         android:textSize="28dp" />
 
     <View
-        android:layout_width="300dp"
+        android:layout_width="460dp"
         android:layout_height="2dp"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
@@ -90,8 +89,7 @@
         <RadioGroup
             android:id="@+id/search_distance"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checkedButton="@+id/distance_1500">
+            android:layout_height="wrap_content">
 
             <RadioButton
                 android:id="@+id/distance_500"
